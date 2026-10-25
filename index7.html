@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethio Spin & Win Reward Bot</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .header {
+            background: linear-gradient(135deg, #047857, #10b981);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .balance-card {
+            background: rgba(15, 23, 42, 0.6);
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+        .balance-card .amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            padding: 0 1rem;
+        }
+        .nav-btn {
+            background: #334155;
+            border: none;
+            color: var(--text);
+            padding: 0.6rem 0.2rem;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background: var(--primary);
+            font-weight: bold;
+        }
+        .content-section {
+            padding: 1.25rem 1rem 1.5rem 1rem;
+            min-height: 280px;
+        }
+        .hidden {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        .stakes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .stake-btn {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .stake-btn.selected {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+        .history-list {
+            max-height: 240px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .history-item {
+            background: #0f172a;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary);
+        }
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            color: #93c5fd;
+            line-height: 1.4;
+        }
+        .alert {
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+        .alert-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎉 Ethio Spin & Win Bot</h1>
+        <p>Min Spin: 5 ETB | Max Spin: 100 ETB</p>
+    </div>
+
+    <div class="balance-card">
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Available Balance</div>
+            <div class="amount" id="userBalance">ETB 0.00</div>
+        </div>
+        <div style="font-size: 1.5rem;">💰</div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('spin')">🎮 Spin</button>
+        <button class="nav-btn" onclick="switchTab('deposit')">💳 Deposit</button>
+        <button class="nav-btn" onclick="switchTab('withdraw')">🏦 Withdraw</button>
+        <button class="nav-btn" onclick="switchTab('history')">📜 History</button>
+    </div>
+
+    <!-- SPIN SECTION -->
+    <div id="section-spin" class="content-section">
+        <div class="info-box">
+            Select your stake amount between <strong>5.00 ETB</strong> and <strong>100.00 ETB</strong> to play the multiplier spin game!
+        </div>
+        <div class="stakes-grid">
+            <button class="stake-btn selected" onclick="setStake(5)">5 ETB</button>
+            <button class="stake-btn" onclick="setStake(20)">20 ETB</button>
+            <button class="stake-btn" onclick="setStake(50)">50 ETB</button>
+            <button class="stake-btn" onclick="setStake(100)">100 ETB</button>
+        </div>
+        <div class="form-group">
+            <label>Custom Stake (ETB)</label>
+            <input type="number" id="customStake" class="form-control" value="5" min="5" max="100" oninput="updateCustomStake(this.value)">
+        </div>
+        <button class="btn" onclick="playSpin()">🎲 SPIN NOW</button>
+        <div id="spinResult"></div>
+    </div>
+
+    <!-- DEPOSIT SECTION -->
+    <div id="section-deposit" class="content-section hidden">
+        <div class="info-box">
+            1. Transfer funds to Telebirr Account: <strong>+251963052077</strong> (tahir shetamam)<br>
+            2. Paste your confirmation SMS text or transaction receipt link below.
+        </div>
+        <div class="form-group">
+            <label>Paste Telebirr SMS / Receipt Text</label>
+            <textarea id="depositText" class="form-control" placeholder="e.g. You have transferred ETB 100.00 to tahir shetamam (+251963052077)..."></textarea>
+        </div>
+        <button class="btn" onclick="verifyDeposit()">✅ Verify & Credited Deposit</button>
+        <div id="depositAlert"></div>
+    </div>
+
+    <!-- WITHDRAW SECTION -->
+    <div id="section-withdraw" class="content-section hidden">
+        <div class="form-group">
+            <label>Select Bank / Payout Method</label>
+            <select id="withdrawBank" class="form-control">
+                <option value="Telebirr">Telebirr Wallet</option>
+                <option value="Oromia Cooperative Bank">Oromia Cooperative Bank</option>
+                <option value="Sinqee Bank">Sinqee Bank</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Account Number / Phone Number</label>
+            <input type="text" id="withdrawAccount" class="form-control" placeholder="Enter phone or account number">
+        </div>
+        <div class="form-group">
+            <label>Withdrawal Amount (ETB)</label>
+            <input type="number" id="withdrawAmount" class="form-control" min="5" placeholder="Min 5 ETB">
+        </div>
+        <button class="btn" onclick="requestWithdrawal()">📤 Submit Withdrawal Request</button>
+        <div id="withdrawAlert"></div>
+    </div>
+
+    <!-- HISTORY SECTION -->
+    <div id="section-history" class="content-section hidden">
+        <div class="history-list" id="historyList">
+            <div class="history-item" style="color: var(--text-muted); text-align: center;">No history logs yet.</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Verified Telebirr Merchant System • +251963052077
+    </div>
+</div>
+
+<script>
+    let state = {
+        balance: 10.0, // Starting bonus for testing
+        selectedStake: 5.0,
+        history: []
+    };
+
+    function updateUI() {
+        document.getElementById('userBalance').innerText = `ETB ${state.balance.toFixed(2)}`;
+        
+        const historyContainer = document.getElementById('historyList');
+        if (state.history.length === 0) {
+            historyContainer.innerHTML = `<div class="history-item" style="color: var(--text-muted); text-align: center;">No transaction history yet.</div>`;
+        } else {
+            historyContainer.innerHTML = state.history.map(item => `<div class="history-item">${item}</div>`).join('');
+        }
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`section-${tabName}`).classList.remove('hidden');
+        event.currentTarget.classList.add('active');
+    }
+
+    function setStake(amount) {
+        state.selectedStake = amount;
+        document.getElementById('customStake').value = amount;
+        document.querySelectorAll('.stake-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            if(btn.innerText.includes(amount)) btn.classList.add('selected');
+        });
+    }
+
+    function updateCustomStake(val) {
+        let amt = parseFloat(val);
+        if(!isNaN(amt)) state.selectedStake = amt;
+    }
+
+    function playSpin() {
+        let stake = state.selectedStake;
+        if (stake < 5 || stake > 100) {
+            showSpinAlert('❌ Spin amount must be between 5 ETB and 100 ETB.', 'error');
+            return;
+        }
+        if (state.balance < stake) {
+            showSpinAlert('❌ Insufficient balance! Please deposit funds first.', 'error');
+            return;
+        }
+
+        state.balance -= stake;
+        
+        // Multiplier probabilities (0x, 0.5x, 1x, 1.5x, 2x)
+        const multipliers = [0.0, 0.5, 1.0, 1.5, 2.0];
+        const mult = multipliers[Math.floor(Math.random() * multipliers.length)];
+        const payout = stake * mult;
+        state.balance += payout;
+
+        let profit = payout - stake;
+        let msg = '';
+        if (profit > 0) {
+            msg = `🎉 YOU WON! +ETB ${profit.toFixed(2)} (${mult}x)`;
+            showSpinAlert(msg, 'success');
+        } else if (profit === 0) {
+            msg = `😐 DRAW! Stake returned (1x)`;
+            showSpinAlert(msg, 'success');
+        } else {
+            msg = `😢 YOU LOST! -ETB ${stake.toFixed(2)}`;
+            showSpinAlert(msg, 'error');
+        }
+
+        state.history.unshift(`🎰 Spin: Stake ETB ${stake} | Multiplier: ${mult}x | Result: ${msg}`);
+        updateUI();
+    }
+
+    function showSpinAlert(text, type) {
+        document.getElementById('spinResult').innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+    }
+
+    function verifyDeposit() {
+        let textInput = document.getElementById('depositText').value;
+        
+        // Check amount and target name/number
+        let amountMatch = textInput.match(/ETB\s+([0-9]+\.[0-9]{2})/i);
+        let nameMatch = textInput.match(/tahir\s+shetamam/i);
+        let numberMatch = textInput.includes('251963052077') || textInput.includes('2519');
+        let linkMatch = textInput.match(/https:\/\/transactioninfo\.ethiotelecom\.et\/receipt\/[A-Za-z0-9]+/i);
+
+        if ((amountMatch && nameMatch) || linkMatch) {
+            let amount = amountMatch ? parseFloat(amountMatch[1]) : 100.00; // Default parse backup if link
+            if (amount < 5) {
+                showDepositAlert('❌ Minimum deposit amount is 5 ETB.', 'error');
+                return;
+            }
+            state.balance += amount;
+            state.history.unshift(`➕ Deposited: +ETB ${amount.toFixed(2)} via Telebirr`);
+            showDepositAlert(`✅ Deposit Successful! Credited ETB ${amount.toFixed(2)} to your account.`, 'success');
+            document.getElementById('depositText').value = '';
+            updateUI();
+        } else {
+            showDepositAlert('❌ Verification Failed. Ensure text contains correct receiver "tahir shetamam" or valid receipt URL.', 'error');
+        }
+    }
+
+    function showDepositAlert(text, type) {
+        document.getElementById('depositAlert').innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+    }
+
+    function requestWithdrawal() {
+        let bank = document.getElementById('withdrawBank').value;
+        let account = document.getElementById('withdrawAccount').value;
+        let amount = parseFloat(document.getElementById('
